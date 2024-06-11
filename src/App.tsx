@@ -23,7 +23,7 @@ export default function App() {
       <SearchButton setSearchResults={setSearchResults} />
 
       {searchResults.length > 0 && (
-        <div className="grid grid-cols-3 justify-between w-full">
+        <div className="grid grid-cols-4 justify-between w-full">
           {searchResults.map((book) => (
             <div key={book.id} className="flex flex-col items-start m-8">
               {book.volumeInfo.imageLinks?.thumbnail && (
