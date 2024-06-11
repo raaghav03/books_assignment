@@ -18,24 +18,34 @@ interface Book {
         subtitle: string;
         categories: string[]
         previewLink: string
+        publisher: string
+        description: string
     };
 }
 
 // Define the props interface for the SearchButton component
 interface SearchButtonProps {
     setSearchResults: (results: Book[]) => void;
+    setError: (error: string | null) => void;
 }
 axios.defaults.baseURL = 'https://www.googleapis.com';
-const SearchButton: React.FC<SearchButtonProps> = ({ setSearchResults }) => {
+const SearchButton: React.FC<SearchButtonProps> = ({ setSearchResults, setError }) => {
     const [query, setQuery] = useState("");
 
     const handleSearch = async () => {
         try {
             const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}&key=${import.meta.env.VITE_GOOGLE_BOOKS_API_KEY}`);
-            setSearchResults(response.data.items || []);
-            console.log(setSearchResults)
+            if (response.data.items && response.data.items.length > 0) {
+                setSearchResults(response.data.items);
+                setError(null); // Clear any previous errors
+            } else {
+                setError("No search results found."); // Set error message
+                setSearchResults([]); // Clear search results
+            }
         } catch (error) {
             console.error("Error fetching data: ", error);
+            setError("An error occurred while fetching data. Please try again."); // Set error message
+            setSearchResults([]);
         }
     };
 
