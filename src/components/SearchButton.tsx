@@ -1,7 +1,10 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from 'axios';
+
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 
 // Define the type for a book (simplified version)
 interface Book {
@@ -12,6 +15,9 @@ interface Book {
         imageLinks?: {
             thumbnail: string;
         };
+        subtitle: string;
+        categories: string[]
+        previewLink: string
     };
 }
 
@@ -19,22 +25,15 @@ interface Book {
 interface SearchButtonProps {
     setSearchResults: (results: Book[]) => void;
 }
-
+axios.defaults.baseURL = 'https://www.googleapis.com';
 const SearchButton: React.FC<SearchButtonProps> = ({ setSearchResults }) => {
     const [query, setQuery] = useState("");
 
     const handleSearch = async () => {
-        const apiKey = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
-        if (!apiKey) {
-            console.error("API key is not defined");
-            return;
-        }
-
         try {
-            const response = await axios.get(
-                `https://www.googleapis.com/books/v1/volumes?q=${query}&key=${apiKey}`
-            );
-            setSearchResults(response.data.items);
+            const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}&key=${import.meta.env.VITE_GOOGLE_BOOKS_API_KEY}`);
+            setSearchResults(response.data.items || []);
+            console.log(setSearchResults)
         } catch (error) {
             console.error("Error fetching data: ", error);
         }
