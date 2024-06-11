@@ -23,14 +23,15 @@ export default function App() {
       <SearchButton setSearchResults={setSearchResults} />
 
       {searchResults.length > 0 && (
-        <div>
+        <div className="grid grid-cols-3 justify-between w-full">
           {searchResults.map((book) => (
-            <div key={book.id}>
-              <h2>{book.volumeInfo.title}</h2>
-              <p>{book.volumeInfo.authors.join(", ")}</p>
+            <div key={book.id} className="flex flex-col items-start m-8">
               {book.volumeInfo.imageLinks?.thumbnail && (
                 <img src={book.volumeInfo.imageLinks.thumbnail} alt={book.volumeInfo.title} />
               )}
+              <h2>{book.volumeInfo.title}</h2>
+              <p>{book.volumeInfo.authors.join(", ")}</p>
+
             </div>
           ))}
         </div>
