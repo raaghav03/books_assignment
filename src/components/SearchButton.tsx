@@ -20,6 +20,8 @@ interface Book {
         previewLink: string
         publisher: string
         description: string
+        language: string
+        publishedDate: React.ReactNode
     };
 }
 

@@ -15,6 +15,8 @@ interface Book {
     previewLink: string;
     publisher: string;
     description: string
+    language: string
+    publishedDate: React.ReactNode
   };
 }
 
@@ -43,12 +45,25 @@ export default function App() {
                 </div>
               )}
               <h2>{book.volumeInfo.title}</h2>
-              <p>{book.volumeInfo.authors.join(", ")}</p>
+              <p>
+                {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
+                  ? book.volumeInfo.authors.join(", ")
+                  : "No authors listed"}
+              </p>
               <p>{book.volumeInfo.subtitle}</p>
               <p>{book.volumeInfo.description}</p>
               <p>{book.volumeInfo.categories}</p>
               <a className="text-blue-800 hover:underline" href={book.volumeInfo.previewLink}>Preview Link</a>
               <p>Published by {book.volumeInfo.publisher}</p>
+              <p>Published by {book.volumeInfo.publishedDate}</p>
+              <p>
+                Language:{' '}
+                {book.volumeInfo.language === 'en'
+                  ? 'English'
+                  : book.volumeInfo.language === 'hi'
+                    ? 'Hindi'
+                    : book.volumeInfo.language}
+              </p>
             </div>
           ))}
         </div>
