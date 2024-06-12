@@ -1,6 +1,7 @@
 import { useState } from "react";
 import SearchButton from "./components/SearchButton";
 
+
 // Define the type for a book (simplified version)
 interface Book {
   id: string;
@@ -55,7 +56,7 @@ export default function App() {
               <p>{book.volumeInfo.categories}</p>
               <a className="text-blue-800 hover:underline" href={book.volumeInfo.previewLink}>Preview Link</a>
               <p>Published by {book.volumeInfo.publisher}</p>
-              <p>Published by {book.volumeInfo.publishedDate}</p>
+              <p>Published on {book.volumeInfo.publishedDate}</p>
               <p>
                 Language:{' '}
                 {book.volumeInfo.language === 'en'
