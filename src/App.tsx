@@ -13,7 +13,10 @@ interface Authors {
   value: string;
   label: string;
 }
-
+interface Language {
+  value: string;
+  label: string;
+}
 export default function App() {
   const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -26,10 +29,14 @@ export default function App() {
 
   const [filteredResults, setFilteredResults] = useState<Book[]>([]);
 
+  const [languages, setLanguages] = useState<Language[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<Language[]>([]);
+
   useEffect(() => {
     if (searchResults.length > 0) {
       const newCategories: Category[] = [];
       const newAuthors: Authors[] = [];
+      const newLanguages: Language[] = [];
       searchResults.forEach((book) => {
         book.volumeInfo.categories?.forEach((category) => {
           if (!newCategories.find((c) => c.value === category)) {
@@ -41,12 +48,15 @@ export default function App() {
             newAuthors.push({ value: author, label: author });
           }
         });
+        if (book.volumeInfo.language && !newLanguages.find((l) => l.value === book.volumeInfo.language)) {
+          newLanguages.push({ value: book.volumeInfo.language, label: book.volumeInfo.language });
+        }
       });
       setCategories(newCategories);
       setAuthors(newAuthors);
+      setLanguages(newLanguages);
     }
   }, [searchResults]);
-
   const filterResults = () => {
     const selectedCategoryValues = selectedCategories.map(
       (category) => category.value
@@ -54,17 +64,21 @@ export default function App() {
     const selectedAuthorValues = selectedAuthors.map(
       (author) => author.value
     );
+    const selectedLanguageValues = selectedLanguages.map(
+      (language) => language.value
+    );
+
     const filtered = searchResults.filter((book) =>
       selectedCategoryValues.every((category) =>
         book.volumeInfo.categories.includes(category)
       ) &&
       selectedAuthorValues.every((author) =>
         book.volumeInfo.authors.includes(author)
-      )
+      ) &&
+      selectedLanguageValues.includes(book.volumeInfo.language)
     );
     setFilteredResults(filtered);
   };
-
   return (
     <div className="flex flex-col items-start w-screen h-screen m-12 gap-8">
       <h1 className="text-2xl text-neutral-800">Book Search Assignment</h1>
@@ -79,6 +93,10 @@ export default function App() {
           authors={authors}
           selectedAuthors={selectedAuthors}
           setSelectedAuthors={setSelectedAuthors}
+          languages={languages}
+          selectedLanguages={selectedLanguages}
+          setSelectedLanguages={setSelectedLanguages}
+
         />
       </h1>
       {error && <p className="text-red-500">{error}</p>}

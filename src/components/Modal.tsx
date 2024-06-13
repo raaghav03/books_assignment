@@ -12,7 +12,10 @@ interface Category {
     value: string;
     label: string;
 }
-
+interface Language {
+    value: string;
+    label: string;
+}
 interface Authors {
     value: string;
     label: string;
@@ -20,12 +23,15 @@ interface Authors {
 
 interface ModalProps {
     categories: Category[];
-    selectedCategories: Category[]; // Ensure this is initialized as an empty array
+    selectedCategories: Category[];
     setSelectedCategories: React.Dispatch<React.SetStateAction<Category[]>>;
     onFilter: () => void;
     authors: Authors[];
     selectedAuthors: Authors[];
     setSelectedAuthors: React.Dispatch<React.SetStateAction<Authors[]>>;
+    languages: Language[];
+    selectedLanguages: Language[];
+    setSelectedLanguages: React.Dispatch<React.SetStateAction<Language[]>>;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -36,6 +42,9 @@ const Modal: React.FC<ModalProps> = ({
     authors,
     selectedAuthors,
     setSelectedAuthors,
+    languages,
+    selectedLanguages,
+    setSelectedLanguages,
 }) => {
     const handleFilterResults = () => {
         onFilter();
@@ -52,7 +61,7 @@ const Modal: React.FC<ModalProps> = ({
                         <h1>Search based on categories</h1>
                         <MultiSelect
                             options={categories}
-                            selected={selectedCategories} // Ensure selected categories are empty initially
+                            selected={selectedCategories}
                             setSelected={setSelectedCategories}
                         />
                     </div>
@@ -64,6 +73,16 @@ const Modal: React.FC<ModalProps> = ({
                             setSelected={setSelectedAuthors}
                         />
                     </div>
+                    {languages.length > 1 && (
+                        <div className="flex flex-col items-start gap-2">
+                            <h1>Search based on languages</h1>
+                            <MultiSelect
+                                options={languages}
+                                selected={selectedLanguages}
+                                setSelected={setSelectedLanguages}
+                            />
+                        </div>
+                    )}
                     <Button onClick={handleFilterResults}>Filter Results</Button>
                 </DialogHeader>
             </DialogContent>

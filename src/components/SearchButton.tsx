@@ -24,7 +24,10 @@ export interface Book {
         publishedDate: React.ReactNode
     };
 }
-
+export interface Language {
+    value: string;
+    label: string;
+}
 // Define the props interface for the SearchButton component
 interface SearchButtonProps {
     setSearchResults: (results: Book[]) => void;
