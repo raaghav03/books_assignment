@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import SearchButton from "./components/SearchButton";
 import Modal from "./components/Modal";
-import { Book } from "./components/SearchButton"
-
+import { Book } from "./components/SearchButton";
 
 interface Category {
   value: string;
@@ -57,6 +56,7 @@ export default function App() {
       setLanguages(newLanguages);
     }
   }, [searchResults]);
+
   const filterResults = () => {
     const selectedCategoryValues = selectedCategories.map(
       (category) => category.value
@@ -69,16 +69,18 @@ export default function App() {
     );
 
     const filtered = searchResults.filter((book) =>
-      selectedCategoryValues.every((category) =>
+      (selectedCategoryValues.length === 0 || selectedCategoryValues.every((category) =>
         book.volumeInfo.categories.includes(category)
-      ) &&
-      selectedAuthorValues.every((author) =>
+      )) &&
+      (selectedAuthorValues.length === 0 || selectedAuthorValues.every((author) =>
         book.volumeInfo.authors.includes(author)
-      ) &&
-      selectedLanguageValues.includes(book.volumeInfo.language)
+      )) &&
+      (selectedLanguageValues.length === 0 || selectedLanguageValues.includes(book.volumeInfo.language))
     );
+
     setFilteredResults(filtered);
   };
+
   return (
     <div className="flex flex-col items-start w-screen h-screen m-12 gap-8">
       <h1 className="text-2xl text-neutral-800">Book Search Assignment</h1>
@@ -96,7 +98,6 @@ export default function App() {
           languages={languages}
           selectedLanguages={selectedLanguages}
           setSelectedLanguages={setSelectedLanguages}
-
         />
       </h1>
       {error && <p className="text-red-500">{error}</p>}
@@ -120,15 +121,13 @@ export default function App() {
                   <h2>{book.volumeInfo.title}</h2>
                   <p>
                     {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
-                      ? book.volumeInfo
-                        .authors.join(", ")
+                      ? book.volumeInfo.authors.join(", ")
                       : "No authors listed"}
                   </p>
                   <p>{book.volumeInfo.subtitle}</p>
                   <p>{book.volumeInfo.description}</p>
                   <p>
-                    {book.volumeInfo.categories &&
-                      book.volumeInfo.categories.length > 0
+                    {book.volumeInfo.categories && book.volumeInfo.categories.length > 0
                       ? book.volumeInfo.categories.join(", ")
                       : "No categories listed"}
                   </p>
