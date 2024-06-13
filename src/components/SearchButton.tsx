@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 
 
 // Define the type for a book (simplified version)
-interface Book {
+export interface Book {
     id: string;
     volumeInfo: {
         title: string;

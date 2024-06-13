@@ -1,24 +1,8 @@
 import { useEffect, useState } from "react";
 import SearchButton from "./components/SearchButton";
 import Modal from "./components/Modal";
+import { Book } from "./components/SearchButton"
 
-interface Book {
-  id: string;
-  volumeInfo: {
-    title: string;
-    authors: string[];
-    imageLinks?: {
-      thumbnail: string;
-    };
-    subtitle: string;
-    categories: string[];
-    previewLink: string;
-    publisher: string;
-    description: string;
-    language: string;
-    publishedDate: string;
-  };
-}
 
 interface Category {
   value: string;
@@ -119,38 +103,38 @@ export default function App() {
                   <p>
                     {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
                       ? book.volumeInfo
-.authors.join(", ")
-: "No authors listed"}
-</p>
-<p>{book.volumeInfo.subtitle}</p>
-<p>{book.volumeInfo.description}</p>
-<p>
-{book.volumeInfo.categories &&
-book.volumeInfo.categories.length > 0
-? book.volumeInfo.categories.join(", ")
-: "No categories listed"}
-</p>
-<a
-                 className="text-blue-800 hover:underline"
-                 href={book.volumeInfo.previewLink}
-               >
-Preview Link
-</a>
-<p>Published by {book.volumeInfo.publisher}</p>
-<p>Published on {book.volumeInfo.publishedDate}</p>
-<p>
-Language:{" "}
-{book.volumeInfo.language === "en"
-? "English"
-: book.volumeInfo.language === "hi"
-? "Hindi"
-: book.volumeInfo.language}
-</p>
-</div>
-)
-)}
-</div>
-)}
-</div>
-);
+                        .authors.join(", ")
+                      : "No authors listed"}
+                  </p>
+                  <p>{book.volumeInfo.subtitle}</p>
+                  <p>{book.volumeInfo.description}</p>
+                  <p>
+                    {book.volumeInfo.categories &&
+                      book.volumeInfo.categories.length > 0
+                      ? book.volumeInfo.categories.join(", ")
+                      : "No categories listed"}
+                  </p>
+                  <a
+                    className="text-blue-800 hover:underline"
+                    href={book.volumeInfo.previewLink}
+                  >
+                    Preview Link
+                  </a>
+                  <p>Published by {book.volumeInfo.publisher}</p>
+                  <p>Published on {book.volumeInfo.publishedDate}</p>
+                  <p>
+                    Language:{" "}
+                    {book.volumeInfo.language === "en"
+                      ? "English"
+                      : book.volumeInfo.language === "hi"
+                        ? "Hindi"
+                        : book.volumeInfo.language}
+                  </p>
+                </div>
+              )
+            )}
+          </div>
+        )}
+    </div>
+  );
 }
