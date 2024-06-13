@@ -23,6 +23,11 @@ export interface Book {
         language: string
         publishedDate: React.ReactNode
     };
+    saleInfo: {
+
+        retailPrice: { amount: number, currencyCode: string }
+
+    }
 }
 export interface Language {
     value: string;

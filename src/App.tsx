@@ -12,10 +12,12 @@ interface Authors {
   value: string;
   label: string;
 }
+
 interface Language {
   value: string;
   label: string;
 }
+
 export default function App() {
   const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -31,11 +33,17 @@ export default function App() {
   const [languages, setLanguages] = useState<Language[]>([]);
   const [selectedLanguages, setSelectedLanguages] = useState<Language[]>([]);
 
+  const [years, setYears] = useState<{ value: string; label: string }[]>([]);
+  const [startYear, setStartYear] = useState<string | null>(null);
+  const [endYear, setEndYear] = useState<string | null>(null);
+
   useEffect(() => {
     if (searchResults.length > 0) {
       const newCategories: Category[] = [];
       const newAuthors: Authors[] = [];
       const newLanguages: Language[] = [];
+      const yearSet: Set<number> = new Set();
+
       searchResults.forEach((book) => {
         book.volumeInfo.categories?.forEach((category) => {
           if (!newCategories.find((c) => c.value === category)) {
@@ -50,10 +58,17 @@ export default function App() {
         if (book.volumeInfo.language && !newLanguages.find((l) => l.value === book.volumeInfo.language)) {
           newLanguages.push({ value: book.volumeInfo.language, label: book.volumeInfo.language });
         }
+        if (book.volumeInfo.publishedDate) {
+          const publishedYear = new Date(book.volumeInfo.publishedDate as string).getFullYear();
+          yearSet.add(publishedYear);
+        }
       });
+
       setCategories(newCategories);
       setAuthors(newAuthors);
       setLanguages(newLanguages);
+      setYears(Array.from(yearSet).sort((a, b) => a - b).map(year => ({ value: year.toString(), label: year.toString() })));
+      setFilteredResults(searchResults);
     }
   }, [searchResults]);
 
@@ -68,15 +83,20 @@ export default function App() {
       (language) => language.value
     );
 
-    const filtered = searchResults.filter((book) =>
-      (selectedCategoryValues.length === 0 || selectedCategoryValues.every((category) =>
-        book.volumeInfo.categories.includes(category)
-      )) &&
-      (selectedAuthorValues.length === 0 || selectedAuthorValues.every((author) =>
-        book.volumeInfo.authors.includes(author)
-      )) &&
-      (selectedLanguageValues.length === 0 || selectedLanguageValues.includes(book.volumeInfo.language))
-    );
+    const filtered = searchResults.filter((book) => {
+      const bookYear = book.volumeInfo.publishedDate ? new Date(book.volumeInfo.publishedDate as string).getFullYear() : null;
+      return (
+        (selectedCategoryValues.length === 0 || selectedCategoryValues.every((category) =>
+          book.volumeInfo.categories?.includes(category)
+        )) &&
+        (selectedAuthorValues.length === 0 || selectedAuthorValues.every((author) =>
+          book.volumeInfo.authors?.includes(author)
+        )) &&
+        (selectedLanguageValues.length === 0 || selectedLanguageValues.includes(book.volumeInfo.language)) &&
+        (startYear === null || (bookYear !== null && bookYear >= parseInt(startYear))) &&
+        (endYear === null || (bookYear !== null && bookYear <= parseInt(endYear)))
+      );
+    });
 
     setFilteredResults(filtered);
   };
@@ -91,67 +111,74 @@ export default function App() {
           categories={categories}
           selectedCategories={selectedCategories}
           setSelectedCategories={setSelectedCategories}
-          onFilter={filterResults}
           authors={authors}
           selectedAuthors={selectedAuthors}
           setSelectedAuthors={setSelectedAuthors}
           languages={languages}
           selectedLanguages={selectedLanguages}
           setSelectedLanguages={setSelectedLanguages}
+          years={years}
+          startYear={startYear}
+          setStartYear={setStartYear}
+          endYear={endYear}
+          setEndYear={setEndYear}
+          onFilter={filterResults}
         />
       </h1>
-      {error && <p className="text-red-500">{error}</p>}
-      {(filteredResults.length > 0 ? filteredResults : searchResults).length >
-        0 && (
-          <div className="grid grid-cols-1 justify-between w-full">
-            {(filteredResults.length > 0 ? filteredResults : searchResults).map(
-              (book) => (
-                <div
-                  key={book.id}
-                  className="flex flex-col gap-2 items-start m-8 p-4 border-2 border-gray-300 rounded-md w-5/6"
-                >
-                  {book.volumeInfo.imageLinks && (
-                    <div className="border border-2-black p-2">
-                      <img
-                        src={book.volumeInfo.imageLinks.thumbnail}
-                        alt={book.volumeInfo.title}
-                      />
-                    </div>
-                  )}
-                  <h2>{book.volumeInfo.title}</h2>
-                  <p>
-                    {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
-                      ? book.volumeInfo.authors.join(", ")
-                      : "No authors listed"}
-                  </p>
-                  <p>{book.volumeInfo.subtitle}</p>
-                  <p>{book.volumeInfo.description}</p>
-                  <p>
-                    {book.volumeInfo.categories && book.volumeInfo.categories.length > 0
-                      ? book.volumeInfo.categories.join(", ")
-                      : "No categories listed"}
-                  </p>
-                  <a
-                    className="text-blue-800 hover:underline"
-                    href={book.volumeInfo.previewLink}
-                  >
-                    Preview Link
-                  </a>
-                  <p>Published by {book.volumeInfo.publisher}</p>
-                  <p>Published on {book.volumeInfo.publishedDate}</p>
-                  <p>
-                    Language:{" "}
-                    {book.volumeInfo.language === "en"
-                      ? "English"
-                      : book.volumeInfo.language === "hi"
-                        ? "Hindi"
-                        : book.volumeInfo.language}
-                  </p>
+      {error && <p>Error: {error}</p>}
+      {filteredResults.length > 0 && (
+        <div className="flex flex-col items-start">
+          {filteredResults.map((book) => (
+            <div
+              key={book.id}
+              className="flex flex-col gap-2 items-start m-8 p-4 border-2 border-gray-300 rounded-md w-5/6"
+            >
+              {book.volumeInfo.imageLinks && (
+                <div className="border border-2-black p-2">
+                  <img
+                    src={book.volumeInfo.imageLinks.thumbnail}
+                    alt={book.volumeInfo.title}
+                  />
                 </div>
-              )
-            )}
-          </div>
-        )}
+              )}
+              <h2>{book.volumeInfo.title}</h2>
+              <p>
+                {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
+                  ? book.volumeInfo.authors.join(", ")
+                  : "No authors listed"}
+              </p>
+              <p>{book.volumeInfo.subtitle}</p>
+              <p>{book.volumeInfo.description}</p>
+              <p>
+                {book.volumeInfo.categories && book.volumeInfo.categories.length > 0
+                  ? book.volumeInfo.categories.join(", ")
+                  : "No categories listed"}
+              </p>
+              {book.saleInfo?.retailPrice && (
+                <p>
+                  Price: {book.saleInfo.retailPrice.amount} {book.saleInfo.retailPrice.currencyCode}
+                </p>
+              )}
+              <a
+                className="text-blue-800 hover:underline"
+                href={book.volumeInfo.previewLink}
+              >
+                Preview Link
+              </a>
+              <p>Published by {book.volumeInfo.publisher}</p>
+              <p>Published on {book.volumeInfo.publishedDate}</p>
+              <p>
+                Language:{" "}
+                {book.volumeInfo.language === "en"
+                  ? "English"
+                  : book.volumeInfo.language === "hi"
+                    ? "Hindi"
+                    : book.volumeInfo.language}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
