@@ -163,74 +163,123 @@ export default function App() {
       {error && <p>Error: {error}</p>}
       <div className="flex flex-col items-start h-full w-full overflow-y-auto">
         {currentResults.length > 0 && (
-          <>
-            <PaginationComponent
-              currentPage={currentPage}
-              totalItems={filteredResults.length}
-              itemsPerPage={itemsPerPage}
-              onPageChange={setCurrentPage}
-            />
-            <div className="flex flex-col items-start">
-              {currentResults.map((book) => (
-                <div
-                  key={book.id}
-                  className="flex flex-col gap-2 items-start m-8 p-4 border-2 border-gray-300 rounded-md w-5/6"
-                >
-                  {book.volumeInfo.imageLinks && (
-                    <div className="border border-2-black p-2">
-                      <img
-                        src={book.volumeInfo.imageLinks.thumbnail}
-                        alt={book.volumeInfo.title}
-                      />
-                    </div>
-                  )}
-                  <h2>{book.volumeInfo.title}</h2>
+          <div className="flex flex-col items-start">
+            {currentResults.map((book) => (
+              <div
+                key={book.id}
+                className="flex flex-col gap-2 items-start m-8 p-4 border-2 border-gray-300 rounded-md w-5/6"
+              >
+                {book.volumeInfo.imageLinks && (
+                  <div className="border border-2-black p-2">
+                    <img
+                      src={book.volumeInfo.imageLinks.thumbnail}
+                      alt={book.volumeInfo.title}
+                    />
+                  </div>
+                )}
+                <h2>{book.volumeInfo.title}</h2>
+                <p>
+                  {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
+                    ? book.volumeInfo.authors.join(", ")
+                    : "No authors listed"}
+                </p>
+                <p>{book.volumeInfo.subtitle}</p>
+                <p>{book.volumeInfo.description}</p>
+                <p>
+                  {book.volumeInfo.categories && book.volumeInfo.categories.length > 0
+                    ? book.volumeInfo.categories.join(", ")
+                    : "No categories listed"}
+                </p>
+                {book.saleInfo?.retailPrice && (
                   <p>
+                    Price: {book.saleInfo.retailPrice.amount} {book.saleInfo.retailPrice.currencyCode}
+                  </p>
+                )}
+                <a
+                  className="text-blue-800 hover:underline"
+                  href={book.volumeInfo.previewLink}
+                >
+                  Preview Link
+                </a>
+                <p>Published by {book.volumeInfo.publisher}</p>
+                <p>Published on {book.volumeInfo.publishedDate}</p>
+                <p>
+                  Language:{" "}
+                  {book.volumeInfo.language === "en"
+                    ? "English"
+                    : book.volumeInfo.language === "hi"
+                      ? "Hindi"
+                      : book.volumeInfo.language}
+                </p>
+                <button
+                  className={`p-2 mt-2 rounded ${isBookmarked(book) ? "bg-yellow-500" : "bg-gray-200"
+                    }`}
+                  onClick={() => handleBookmarkToggle(book)}
+                >
+                  {isBookmarked(book) ? "Remove Bookmark" : "Bookmark"}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="mt-8">
+        <h2 className="text-xl font-bold mb-4">Bookmarked Items</h2>
+        {bookmarkedBooks.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            {bookmarkedBooks.map((book) => (
+              <div
+                key={book.id}
+                className="flex items-start p-4 border border-gray-300 rounded-md w-full"
+              >
+                <div className="flex-none mr-4">
+                  {book.volumeInfo.imageLinks && (
+                    <img
+                      src={book.volumeInfo.imageLinks.thumbnail}
+                      alt={book.volumeInfo.title}
+                      className="w-24 h--32 object-cover"
+                    />
+                  )}
+                </div>
+                <div className="flex flex-col flex-1">
+                  <h3 className="text-lg font-medium">{book.volumeInfo.title}</h3>
+                  <p className="text-gray-600">
                     {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
                       ? book.volumeInfo.authors.join(", ")
                       : "No authors listed"}
                   </p>
-                  <p>{book.volumeInfo.subtitle}</p>
-                  <p>{book.volumeInfo.description}</p>
-                  <p>
-                    {book.volumeInfo.categories && book.volumeInfo.categories.length > 0
-                      ? book.volumeInfo.categories.join(", ")
-                      : "No categories listed"}
-                  </p>
-                  {book.saleInfo?.retailPrice && (
-                    <p>
-                      Price: {book.saleInfo.retailPrice.amount} {book.saleInfo.retailPrice.currencyCode}
-                    </p>
-                  )}
-                  <a
-                    className="text-blue-800 hover:underline"
-                    href={book.volumeInfo.previewLink}
-                  >
-                    Preview Link
-                  </a>
-                  <p>Published by {book.volumeInfo.publisher}</p>
-                  <p>Published on {book.volumeInfo.publishedDate}</p>
-                  <p>
-                    Language:{" "}
-                    {book.volumeInfo.language === "en"
-                      ? "English"
-                      : book.volumeInfo.language === "hi"
-                        ? "Hindi"
-                        : book.volumeInfo.language}
-                  </p>
-                  <button
-                    className={`p-2 mt-2 rounded ${isBookmarked(book) ? "bg-yellow-500" : "bg-gray-200"
-                      }`}
-                    onClick={() => handleBookmarkToggle(book)}
-                  >
-                    {isBookmarked(book) ? "Remove Bookmark" : "Bookmark"}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </>)}
-      </div>
 
+                  <div className="flex items-center mt-2">
+                    <a
+                      className="text-blue-800 hover:underline"
+                      href={book.volumeInfo.previewLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Preview Link
+                    </a>
+                    <button
+                      className={`ml-auto p-2 rounded ${isBookmarked(book) ? "bg-yellow-500" : "bg-gray-200"
+                        }`}
+                      onClick={() => handleBookmarkToggle(book)}
+                    >
+                      {isBookmarked(book) ? "Remove Bookmark" : "Bookmark"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-600">No items bookmarked yet.</p>
+        )}
+      </div>
+      <PaginationComponent
+        totalItems={filteredResults.length}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
     </div>
   );
 }
