@@ -137,7 +137,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col items-start  h-screen md:m-12 m-4 gap-8">
+    <div className="flex flex-col items-start   md:m-12 m-4 gap-8">
       <div className="flex flex-col items-start">
         <h1 className="text-3xl text-neutral-800">Book Search Assignment</h1>
         <p className="text-neutral-500 text-md">by raghav nagpal</p>
@@ -145,10 +145,10 @@ export default function App() {
       <SearchButton setSearchResults={setSearchResults} setError={setError} />
 
       {error && <p>Error: {error}</p>}
-      <div className="flex flex-col items-start h-full  ">
+      <div className="flex flex-col items-start">
         {currentResults.length > 0 && (
           <>
-            <div className="flex flex-row items-start justify-between w-full mb-10">
+            <div className="flex md:flex-row flex-col gap-8 items-start justify-between w-full mb-10">
               <h1>
                 Not satisfied with the results? Try{" "}
                 <Modal
@@ -172,7 +172,7 @@ export default function App() {
               <div className="">
                 <h2 className="text-xl font-bold mb-4">Bookmarked Items</h2>
                 {bookmarkedBooks.length > 0 ? (
-                  <div className="flex flex-col gap-4">
+                  <div className="flex md:flex-col gap-4">
                     {bookmarkedBooks.map((book) => (
                       <div
                         key={book.id}
@@ -183,13 +183,13 @@ export default function App() {
                             <img
                               src={book.volumeInfo.imageLinks.thumbnail}
                               alt={book.volumeInfo.title}
-                              className="w-24 h--32 object-cover"
+                              className="w-24 h-32 object-cover hidden md:inline-flex"
                             />
                           )}
                         </div>
-                        <div className="flex flex-col flex-1">
-                          <h3 className="text-lg font-medium">{book.volumeInfo.title}</h3>
-                          <p className="text-gray-600">
+                        <div className="flex flex-col flex-1 ">
+                          <h3 className=" font-medium md:text-md text-sm">{book.volumeInfo.title}</h3>
+                          <p className="text-gray-600 md:text-sm text-xs">
                             {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
                               ? book.volumeInfo.authors.join(", ")
                               : "No authors listed"}
@@ -197,7 +197,7 @@ export default function App() {
 
                           <div className="flex items-center mt-2">
                             <a
-                              className="text-blue-800 hover:underline"
+                              className="text-blue-800 hover:underline text-sm md:text-md"
                               href={book.volumeInfo.previewLink}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -230,13 +230,8 @@ export default function App() {
               </div>
 
             </div>
-            <PaginationComponent
-              totalItems={filteredResults.length}
-              itemsPerPage={itemsPerPage}
-              currentPage={currentPage}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
-            <div className="grid grid-cols-2 gap-4 overflow-y-auto h-fu">
+
+            <div className="grid md:grid-cols-2 gap-4 overflow-y-auto">
               {currentResults.map((book) => (
 
                 <div
@@ -309,6 +304,12 @@ export default function App() {
                 </div>
               ))}
             </div>
+            <PaginationComponent
+              totalItems={filteredResults.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
           </>)}
       </div>
 
