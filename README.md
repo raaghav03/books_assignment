@@ -1,30 +1,23 @@
-# React + TypeScript + Vite
+# Problem Statement
+The task was to create a simple web application that allows users to search for books using the Google Books API and display the results.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+# ToDo List
+Requirements:
+- Homepage: Create a homepage with a search bar and a button to initiate the search.
+- Search Functionality: Implement a search feature where users can enter keywords (e.g., title, author) and initiate a search.
+- Display Results: Display the search results in a visually appealing manner, showing at least the book title, author, and thumbnail (if available).
+- Responsive Design: Ensure that the application is responsive and works well on both desktop and mobile devices.
+- Error Handling: Implement error handling for cases such as failed API requests or no search results found.
+- Code Quality: Write clean, well-structured code with proper comments where necessary. Follow best practices for HTML, CSS, and JavaScript.
+- Framework: You are free to choose any frontend framework or library you're comfortable with (eg., React, Vue.js, Angular), or you can use vanilla JavaScript if you prefer.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+Bonus (Optional):
+- Implement pagination for search results.
+- Add filtering options for search results (e.g., by category, publication year).
+- Implement caching to improve performance and reduce API requests.
+- Add a feature to allow users to save/bookmark their favorite books locally.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-- Configure the top-level `parserOptions` property like this:
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
