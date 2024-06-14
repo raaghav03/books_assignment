@@ -65,19 +65,19 @@ const SearchButton: React.FC<SearchButtonProps> = ({
         }
 
         try {
-            const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
-            const data = await response.json();
-
-            if (data.items) {
-                console.log("Fetched new data for query:", query);
-                setSearchResults(data.items);
-                localStorage.setItem(`search_${query}`, JSON.stringify({ timestamp: Date.now(), results: data.items }));
+            const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=40&key=${import.meta.env.VITE_GOOGLE_BOOKS_API_KEY}`);
+            // https://www.googleapis.com/books/v1/volumes?q=inauthor:danielle%20steele&maxResults=40&key=your_very_own_api_key
+            if (response.data.items && response.data.items.length > 0) {
+                setSearchResults(response.data.items);
+                setError(null); // Clear any previous errors
             } else {
-                setError("No results found.");
+                setError("No search results found."); // Set error message
+                setSearchResults([]); // Clear search results
             }
         } catch (error) {
-            console.log("Error fetching data for query:", query, error);
-            setError("An error occurred while fetching data.");
+            console.error("Error fetching data: ", error);
+            setError("An error occurred while fetching data. Please try again."); // Set error message
+            setSearchResults([]);
         }
     };
 
