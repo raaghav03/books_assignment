@@ -61,13 +61,22 @@ const SearchButton: React.FC<SearchButtonProps> = ({
                 return;
             } else {
                 console.log("Cached data expired for query:", query);
+                localStorage.removeItem(`search_${query}`); // Remove expired cache
             }
+        } else {
+            console.log("Hitting Api Call", query);
         }
 
         try {
             const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=40&key=${import.meta.env.VITE_GOOGLE_BOOKS_API_KEY}`);
-            // https://www.googleapis.com/books/v1/volumes?q=inauthor:danielle%20steele&maxResults=40&key=your_very_own_api_key
             if (response.data.items && response.data.items.length > 0) {
+                // Cache the fetched data
+                const dataToCache = {
+                    timestamp: Date.now(),
+                    results: response.data.items,
+                };
+                localStorage.setItem(`search_${query}`, JSON.stringify(dataToCache));
+
                 setSearchResults(response.data.items);
                 setError(null); // Clear any previous errors
             } else {
@@ -80,6 +89,7 @@ const SearchButton: React.FC<SearchButtonProps> = ({
             setSearchResults([]);
         }
     };
+
 
     return (
         <>
