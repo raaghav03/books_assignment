@@ -1,10 +1,8 @@
 import { useState } from "react";
-import axios from 'axios';
-
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 
 // Define the type for a book (simplified version)
 export interface Book {
@@ -16,19 +14,18 @@ export interface Book {
             thumbnail: string;
         };
         subtitle: string;
-        categories: string[]
-        previewLink: string
-        publisher: string
-        description: string
-        language: string
-        publishedDate: React.ReactNode
+        categories: string[];
+        previewLink: string;
+        publisher: string;
+        description: string;
+        language: string;
+        publishedDate: React.ReactNode;
     };
     saleInfo: {
-
-        retailPrice: { amount: number, currencyCode: string }
-
-    }
+        retailPrice: { amount: number; currencyCode: string };
+    };
 }
+const CACHE_EXPIRY = 24 * 60 * 60 * 1000;
 export interface Language {
     value: string;
     label: string;
@@ -38,25 +35,49 @@ interface SearchButtonProps {
     setSearchResults: (results: Book[]) => void;
     setError: (error: string | null) => void;
 }
-axios.defaults.baseURL = 'https://www.googleapis.com';
-const SearchButton: React.FC<SearchButtonProps> = ({ setSearchResults, setError }) => {
+axios.defaults.baseURL = "https://www.googleapis.com";
+const SearchButton: React.FC<SearchButtonProps> = ({
+    setSearchResults,
+    setError,
+}) => {
     const [query, setQuery] = useState("");
 
     const handleSearch = async () => {
-        try {
-            const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=40&key=${import.meta.env.VITE_GOOGLE_BOOKS_API_KEY}`);
-            // https://www.googleapis.com/books/v1/volumes?q=inauthor:danielle%20steele&maxResults=40&key=your_very_own_api_key
-            if (response.data.items && response.data.items.length > 0) {
-                setSearchResults(response.data.items);
-                setError(null); // Clear any previous errors
+        setError(null);
+
+        if (!query.trim()) {
+            setError("Please enter a search query.");
+            return;
+        }
+
+        // Check for cached data
+        const cachedData = localStorage.getItem(`search_${query}`);
+        if (cachedData) {
+            const parsedData = JSON.parse(cachedData);
+            if (Date.now() - parsedData.timestamp < CACHE_EXPIRY) {
+                console.log("Using cached data for query:", query);
+                console.log("Cached data:", parsedData.results);
+                setSearchResults(parsedData.results);
+                return;
             } else {
-                setError("No search results found."); // Set error message
-                setSearchResults([]); // Clear search results
+                console.log("Cached data expired for query:", query);
+            }
+        }
+
+        try {
+            const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+            const data = await response.json();
+
+            if (data.items) {
+                console.log("Fetched new data for query:", query);
+                setSearchResults(data.items);
+                localStorage.setItem(`search_${query}`, JSON.stringify({ timestamp: Date.now(), results: data.items }));
+            } else {
+                setError("No results found.");
             }
         } catch (error) {
-            console.error("Error fetching data: ", error);
-            setError("An error occurred while fetching data. Please try again."); // Set error message
-            setSearchResults([]);
+            console.log("Error fetching data for query:", query, error);
+            setError("An error occurred while fetching data.");
         }
     };
 
