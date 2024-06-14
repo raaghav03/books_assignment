@@ -44,7 +44,8 @@ const SearchButton: React.FC<SearchButtonProps> = ({ setSearchResults, setError 
 
     const handleSearch = async () => {
         try {
-            const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}&key=${import.meta.env.VITE_GOOGLE_BOOKS_API_KEY}`);
+            const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=40&key=${import.meta.env.VITE_GOOGLE_BOOKS_API_KEY}`);
+            // https://www.googleapis.com/books/v1/volumes?q=inauthor:danielle%20steele&maxResults=40&key=your_very_own_api_key
             if (response.data.items && response.data.items.length > 0) {
                 setSearchResults(response.data.items);
                 setError(null); // Clear any previous errors

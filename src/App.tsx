@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SearchButton from "./components/SearchButton";
 import Modal from "./components/Modal";
 import { Book } from "./components/SearchButton";
+import Pagination from "./components/Comp_Pagination";
 
 interface Category {
   value: string;
@@ -36,6 +37,9 @@ export default function App() {
   const [years, setYears] = useState<{ value: string; label: string }[]>([]);
   const [startYear, setStartYear] = useState<string | null>(null);
   const [endYear, setEndYear] = useState<string | null>(null);
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     if (searchResults.length > 0) {
@@ -99,10 +103,16 @@ export default function App() {
     });
 
     setFilteredResults(filtered);
+    setCurrentPage(1); // Reset to first page after filtering
   };
 
+  // Calculate the results to display based on the current page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
-    <div className="flex flex-col items-start w-screen h-screen m-12 gap-8">
+    <div className="flex flex-col items-start   h-full m-12 gap-8 ">
       <h1 className="text-2xl text-neutral-800">Book Search Assignment</h1>
       <SearchButton setSearchResults={setSearchResults} setError={setError} />
       <h1>
@@ -126,59 +136,70 @@ export default function App() {
         />
       </h1>
       {error && <p>Error: {error}</p>}
-      {filteredResults.length > 0 && (
-        <div className="flex flex-col items-start">
-          {filteredResults.map((book) => (
-            <div
-              key={book.id}
-              className="flex flex-col gap-2 items-start m-8 p-4 border-2 border-gray-300 rounded-md w-5/6"
-            >
-              {book.volumeInfo.imageLinks && (
-                <div className="border border-2-black p-2">
-                  <img
-                    src={book.volumeInfo.imageLinks.thumbnail}
-                    alt={book.volumeInfo.title}
-                  />
-                </div>
-              )}
-              <h2>{book.volumeInfo.title}</h2>
-              <p>
-                {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
-                  ? book.volumeInfo.authors.join(", ")
-                  : "No authors listed"}
-              </p>
-              <p>{book.volumeInfo.subtitle}</p>
-              <p>{book.volumeInfo.description}</p>
-              <p>
-                {book.volumeInfo.categories && book.volumeInfo.categories.length > 0
-                  ? book.volumeInfo.categories.join(", ")
-                  : "No categories listed"}
-              </p>
-              {book.saleInfo?.retailPrice && (
-                <p>
-                  Price: {book.saleInfo.retailPrice.amount} {book.saleInfo.retailPrice.currencyCode}
-                </p>
-              )}
-              <a
-                className="text-blue-800 hover:underline"
-                href={book.volumeInfo.previewLink}
+      {currentResults.length > 0 && (
+        <>
+          <Pagination
+            currentPage={currentPage}
+            totalItems={filteredResults.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+          />
+          <div className="flex flex-col items-start w-full overflow-x-auto">
+            {currentResults.map((book) => (
+              <div
+                key={book.id}
+                className="flex flex-col gap-2 items-start p-4 border-2 border-gray-300 rounded-md max-w-4xl w-3/4"
               >
-                Preview Link
-              </a>
-              <p>Published by {book.volumeInfo.publisher}</p>
-              <p>Published on {book.volumeInfo.publishedDate}</p>
-              <p>
-                Language:{" "}
-                {book.volumeInfo.language === "en"
-                  ? "English"
-                  : book.volumeInfo.language === "hi"
-                    ? "Hindi"
-                    : book.volumeInfo.language}
-              </p>
-            </div>
-          ))}
-        </div>
+
+                {book.volumeInfo.imageLinks && (
+                  <div className="border border-2-black p-2">
+                    <img
+                      src={book.volumeInfo.imageLinks.thumbnail}
+                      alt={book.volumeInfo.title}
+                    />
+                  </div>
+                )}
+                <h2>{book.volumeInfo.title}</h2>
+                <p>
+                  {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
+                    ? book.volumeInfo.authors.join(", ")
+                    : "No authors listed"}
+                </p>
+                <p>{book.volumeInfo.subtitle}</p>
+                <p>{book.volumeInfo.description}</p>
+                <p>
+                  {book.volumeInfo.categories && book.volumeInfo.categories.length > 0
+                    ? book.volumeInfo.categories.join(", ")
+                    : "No categories listed"}
+                </p>
+                {book.saleInfo?.retailPrice && (
+                  <p>
+                    Price: {book.saleInfo.retailPrice.amount} {book.saleInfo.retailPrice.currencyCode}
+                  </p>
+                )}
+                <a
+                  className="text-blue-800 hover:underline"
+                  href={book.volumeInfo.previewLink}
+                >
+                  Preview Link
+                </a>
+                <p>Published by {book.volumeInfo.publisher}</p>
+                <p>Published on {book.volumeInfo.publishedDate}</p>
+                <p>
+                  Language:{" "}
+                  {book.volumeInfo.language === "en"
+                    ? "English"
+                    : book.volumeInfo.language === "hi"
+                      ? "Hindi"
+                      : book.volumeInfo.language}
+                </p>
+              </div>
+            ))}
+          </div>
+
+        </>
       )}
+
     </div>
   );
 }
