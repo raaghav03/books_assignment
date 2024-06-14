@@ -137,12 +137,15 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col items-start  h-screen lg:m-12 gap-8">
-      <h1 className="text-2xl text-neutral-800">Book Search Assignment</h1>
+    <div className="flex flex-col items-start  h-screen md:m-12 m-4 gap-8">
+      <div className="flex flex-col items-start">
+        <h1 className="text-3xl text-neutral-800">Book Search Assignment</h1>
+        <p className="text-neutral-500 text-md">by raghav nagpal</p>
+      </div>
       <SearchButton setSearchResults={setSearchResults} setError={setError} />
 
       {error && <p>Error: {error}</p>}
-      <div className="flex flex-col items-start h-full  overflow-y-auto">
+      <div className="flex flex-col items-start h-full  ">
         {currentResults.length > 0 && (
           <>
             <div className="flex flex-row items-start justify-between w-full mb-10">
@@ -225,6 +228,7 @@ export default function App() {
                   <p className="text-gray-600">No items bookmarked yet.</p>
                 )}
               </div>
+
             </div>
             <PaginationComponent
               totalItems={filteredResults.length}
@@ -232,46 +236,41 @@ export default function App() {
               currentPage={currentPage}
               onPageChange={(page) => setCurrentPage(page)}
             />
-            <div className="grid grid-cols-1">
+            <div className="grid grid-cols-2 gap-4 overflow-y-auto h-fu">
               {currentResults.map((book) => (
+
                 <div
                   key={book.id}
-                  className="flex flex-col gap-2 items-start lg:m-8 p-4 border-2 border-gray-300 rounded-md w-5/6"
+                  className="flex flex-col gap-3 items-start  p-4 border-[1px] border-gray-200 rounded-md w-fill"
                 >
                   {book.volumeInfo.imageLinks && (
-                    <div className="border border-2-black p-2">
-                      <img
-                        src={book.volumeInfo.imageLinks.thumbnail}
-                        alt={book.volumeInfo.title}
-                      />
-                    </div>
+
+                    <img className="object-fill"
+                      src={book.volumeInfo.imageLinks.thumbnail}
+                      alt={book.volumeInfo.title}
+                    />
+
                   )}
-                  <h2>{book.volumeInfo.title}</h2>
-                  <p>
-                    {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
-                      ? book.volumeInfo.authors.join(", ")
+                  <div className="flex flex-col gap-2">
+                    <h2 className="text-5xl text-neutral-800 font-semibold">{book.volumeInfo.title}</h2>
+                    <p className="text-neutral-600 text-sm">{book.volumeInfo.subtitle}</p>
+                  </div>
+                  <p className="text-neutral-400 ">
+                    {book.volumeInfo && book.volumeInfo.authors && book.volumeInfo.authors.length > 0
+                      ? `Author: ${book.volumeInfo.authors.join(",")}`
                       : "No authors listed"}
                   </p>
-                  <p>{book.volumeInfo.subtitle}</p>
-                  <p>{book.volumeInfo.description}</p>
+
+
                   <p>
                     {book.volumeInfo.categories && book.volumeInfo.categories.length > 0
-                      ? book.volumeInfo.categories.join(", ")
+                      ? ` Categories - ${book.volumeInfo.categories.join(", ")}`
                       : "No categories listed"}
                   </p>
-                  {book.saleInfo?.retailPrice && (
-                    <p>
-                      Price: {book.saleInfo.retailPrice.amount} {book.saleInfo.retailPrice.currencyCode}
-                    </p>
-                  )}
-                  <a
-                    className="text-blue-800 hover:underline"
-                    href={book.volumeInfo.previewLink}
-                  >
-                    Preview Link
-                  </a>
-                  <p>Published by {book.volumeInfo.publisher}</p>
-                  <p>Published on {book.volumeInfo.publishedDate}</p>
+
+
+                  <p className="text-neutral-400">Published by {book.volumeInfo.publisher} on {book.volumeInfo.publishedDate}</p>
+
                   <p>
                     Language:{" "}
                     {book.volumeInfo.language === "en"
@@ -280,21 +279,33 @@ export default function App() {
                         ? "Hindi"
                         : book.volumeInfo.language}
                   </p>
-                  <button
-                    className="p-2 mt-2 rounded"
-                    onClick={() => handleBookmarkToggle(book)}
-                    aria-label={isBookmarked(book) ? "Remove Bookmark" : "Bookmark"}
-                  >
-                    {isBookmarked(book) ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M19 21L12 17L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z" fill="#131313" stroke="#131313" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M19 21L12 17L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z" stroke="#131313" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </button>
+                  <div className="flex flex-row items-center w-full justify-between">
+                    <a
+                      className="text-blue-800 hover:underline"
+                      href={book.volumeInfo.previewLink}
+                    >
+                      {book.saleInfo?.retailPrice && (
+                        <p>
+                          Buy now for ₹{book.saleInfo.retailPrice.amount}
+                        </p>
+                      )}
+                    </a>
+                    <button
+                      className="p-2 mt-2 rounded"
+                      onClick={() => handleBookmarkToggle(book)}
+                      aria-label={isBookmarked(book) ? "Remove Bookmark" : "Bookmark"}
+                    >
+                      {isBookmarked(book) ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M19 21L12 17L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z" fill="#131313" stroke="#131313" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M19 21L12 17L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z" stroke="#131313" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
