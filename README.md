@@ -20,4 +20,7 @@ Bonus (Optional):
 - Add a feature to allow users to save/bookmark their favorite books locally.
 
 
+## HomePage - Create a homepage with a search bar and a button to initiate the search
 
+Implemented a simple search text box input that searches based on relevance
+<img width="578" alt="Screenshot 2024-06-14 at 8 54 54 PM" src="https://github.com/raaghav03/books_assignment/assets/121729910/67cbb2c2-4f98-4956-98c3-1e8422200854">
