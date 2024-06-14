@@ -144,11 +144,11 @@ export default function App() {
             itemsPerPage={itemsPerPage}
             onPageChange={setCurrentPage}
           />
-          <div className="flex flex-col items-start w-full overflow-x-auto">
+          <div className="flex flex-col items-start w-full overflow-x-auto gap-4">
             {currentResults.map((book) => (
               <div
                 key={book.id}
-                className="flex flex-col gap-2 items-start p-4 border-2 border-gray-300 rounded-md max-w-4xl w-3/4"
+                className="flex flex-col gap-2 items-start p-4 border-2 border-gray-300 rounded-md  w-full"
               >
 
                 {book.volumeInfo.imageLinks && (
