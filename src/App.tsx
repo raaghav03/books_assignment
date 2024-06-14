@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import SearchButton from "./components/SearchButton";
 import Modal from "./components/Modal";
+import PaginationComponent from "./components/Comp_Pagination";
 import { Book } from "./components/SearchButton";
-import Pagination from "./components/Comp_Pagination";
 
 interface Category {
   value: string;
@@ -40,6 +40,16 @@ export default function App() {
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 10;
+
+  const [bookmarkedBooks, setBookmarkedBooks] = useState<Book[]>([]);
+
+  // Load bookmarks from local storage on mount
+  useEffect(() => {
+    const savedBookmarks = localStorage.getItem("bookmarkedBooks");
+    if (savedBookmarks) {
+      setBookmarkedBooks(JSON.parse(savedBookmarks));
+    }
+  }, []);
 
   useEffect(() => {
     if (searchResults.length > 0) {
@@ -111,8 +121,23 @@ export default function App() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem);
 
+  // Handle bookmark toggle
+  const handleBookmarkToggle = (book: Book) => {
+    const isBookmarked = bookmarkedBooks.some((b) => b.id === book.id);
+    const updatedBookmarks = isBookmarked
+      ? bookmarkedBooks.filter((b) => b.id !== book.id)
+      : [...bookmarkedBooks, book];
+
+    setBookmarkedBooks(updatedBookmarks);
+    localStorage.setItem("bookmarkedBooks", JSON.stringify(updatedBookmarks));
+  };
+
+  const isBookmarked = (book: Book) => {
+    return bookmarkedBooks.some((b) => b.id === book.id);
+  };
+
   return (
-    <div className="flex flex-col items-start   h-full m-12 gap-8 ">
+    <div className="flex flex-col items-start w-screen max-w-full h-screen m-12 gap-8">
       <h1 className="text-2xl text-neutral-800">Book Search Assignment</h1>
       <SearchButton setSearchResults={setSearchResults} setError={setError} />
       <h1>
@@ -136,69 +161,75 @@ export default function App() {
         />
       </h1>
       {error && <p>Error: {error}</p>}
-      {currentResults.length > 0 && (
-        <>
-          <Pagination
-            currentPage={currentPage}
-            totalItems={filteredResults.length}
-            itemsPerPage={itemsPerPage}
-            onPageChange={setCurrentPage}
-          />
-          <div className="flex flex-col items-start w-full overflow-x-auto gap-4">
-            {currentResults.map((book) => (
-              <div
-                key={book.id}
-                className="flex flex-col gap-2 items-start p-4 border-2 border-gray-300 rounded-md  w-full"
-              >
-
-                {book.volumeInfo.imageLinks && (
-                  <div className="border border-2-black p-2">
-                    <img
-                      src={book.volumeInfo.imageLinks.thumbnail}
-                      alt={book.volumeInfo.title}
-                    />
-                  </div>
-                )}
-                <h2>{book.volumeInfo.title}</h2>
-                <p>
-                  {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
-                    ? book.volumeInfo.authors.join(", ")
-                    : "No authors listed"}
-                </p>
-                <p>{book.volumeInfo.subtitle}</p>
-                <p>{book.volumeInfo.description}</p>
-                <p>
-                  {book.volumeInfo.categories && book.volumeInfo.categories.length > 0
-                    ? book.volumeInfo.categories.join(", ")
-                    : "No categories listed"}
-                </p>
-                {book.saleInfo?.retailPrice && (
-                  <p>
-                    Price: {book.saleInfo.retailPrice.amount} {book.saleInfo.retailPrice.currencyCode}
-                  </p>
-                )}
-                <a
-                  className="text-blue-800 hover:underline"
-                  href={book.volumeInfo.previewLink}
+      <div className="flex flex-col items-start h-full w-full overflow-y-auto">
+        {currentResults.length > 0 && (
+          <>
+            <PaginationComponent
+              currentPage={currentPage}
+              totalItems={filteredResults.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+            />
+            <div className="flex flex-col items-start">
+              {currentResults.map((book) => (
+                <div
+                  key={book.id}
+                  className="flex flex-col gap-2 items-start m-8 p-4 border-2 border-gray-300 rounded-md w-5/6"
                 >
-                  Preview Link
-                </a>
-                <p>Published by {book.volumeInfo.publisher}</p>
-                <p>Published on {book.volumeInfo.publishedDate}</p>
-                <p>
-                  Language:{" "}
-                  {book.volumeInfo.language === "en"
-                    ? "English"
-                    : book.volumeInfo.language === "hi"
-                      ? "Hindi"
-                      : book.volumeInfo.language}
-                </p>
-              </div>
-            ))}
-          </div>
-
-        </>
-      )}
+                  {book.volumeInfo.imageLinks && (
+                    <div className="border border-2-black p-2">
+                      <img
+                        src={book.volumeInfo.imageLinks.thumbnail}
+                        alt={book.volumeInfo.title}
+                      />
+                    </div>
+                  )}
+                  <h2>{book.volumeInfo.title}</h2>
+                  <p>
+                    {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
+                      ? book.volumeInfo.authors.join(", ")
+                      : "No authors listed"}
+                  </p>
+                  <p>{book.volumeInfo.subtitle}</p>
+                  <p>{book.volumeInfo.description}</p>
+                  <p>
+                    {book.volumeInfo.categories && book.volumeInfo.categories.length > 0
+                      ? book.volumeInfo.categories.join(", ")
+                      : "No categories listed"}
+                  </p>
+                  {book.saleInfo?.retailPrice && (
+                    <p>
+                      Price: {book.saleInfo.retailPrice.amount} {book.saleInfo.retailPrice.currencyCode}
+                    </p>
+                  )}
+                  <a
+                    className="text-blue-800 hover:underline"
+                    href={book.volumeInfo.previewLink}
+                  >
+                    Preview Link
+                  </a>
+                  <p>Published by {book.volumeInfo.publisher}</p>
+                  <p>Published on {book.volumeInfo.publishedDate}</p>
+                  <p>
+                    Language:{" "}
+                    {book.volumeInfo.language === "en"
+                      ? "English"
+                      : book.volumeInfo.language === "hi"
+                        ? "Hindi"
+                        : book.volumeInfo.language}
+                  </p>
+                  <button
+                    className={`p-2 mt-2 rounded ${isBookmarked(book) ? "bg-yellow-500" : "bg-gray-200"
+                      }`}
+                    onClick={() => handleBookmarkToggle(book)}
+                  >
+                    {isBookmarked(book) ? "Remove Bookmark" : "Bookmark"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>)}
+      </div>
 
     </div>
   );
