@@ -137,7 +137,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col items-start  h-screen m-12 gap-8">
+    <div className="flex flex-col items-start  h-screen lg:m-12 gap-8">
       <h1 className="text-2xl text-neutral-800">Book Search Assignment</h1>
       <SearchButton setSearchResults={setSearchResults} setError={setError} />
 
@@ -145,76 +145,86 @@ export default function App() {
       <div className="flex flex-col items-start h-full  overflow-y-auto">
         {currentResults.length > 0 && (
           <>
-            <h1>
-              Not satisfied with the results? Try{" "}
-              <Modal
-                categories={categories}
-                selectedCategories={selectedCategories}
-                setSelectedCategories={setSelectedCategories}
-                authors={authors}
-                selectedAuthors={selectedAuthors}
-                setSelectedAuthors={setSelectedAuthors}
-                languages={languages}
-                selectedLanguages={selectedLanguages}
-                setSelectedLanguages={setSelectedLanguages}
-                years={years}
-                startYear={startYear}
-                setStartYear={setStartYear}
-                endYear={endYear}
-                setEndYear={setEndYear}
-                onFilter={filterResults}
-              />
-            </h1>
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-4">Bookmarked Items</h2>
-              {bookmarkedBooks.length > 0 ? (
-                <div className="flex flex-col gap-4">
-                  {bookmarkedBooks.map((book) => (
-                    <div
-                      key={book.id}
-                      className="flex items-start p-4 border border-gray-300 rounded-md w-full"
-                    >
-                      <div className="flex-none mr-4">
-                        {book.volumeInfo.imageLinks && (
-                          <img
-                            src={book.volumeInfo.imageLinks.thumbnail}
-                            alt={book.volumeInfo.title}
-                            className="w-24 h--32 object-cover"
-                          />
-                        )}
-                      </div>
-                      <div className="flex flex-col flex-1">
-                        <h3 className="text-lg font-medium">{book.volumeInfo.title}</h3>
-                        <p className="text-gray-600">
-                          {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
-                            ? book.volumeInfo.authors.join(", ")
-                            : "No authors listed"}
-                        </p>
+            <div className="flex flex-row items-start justify-between w-full mb-10">
+              <h1>
+                Not satisfied with the results? Try{" "}
+                <Modal
+                  categories={categories}
+                  selectedCategories={selectedCategories}
+                  setSelectedCategories={setSelectedCategories}
+                  authors={authors}
+                  selectedAuthors={selectedAuthors}
+                  setSelectedAuthors={setSelectedAuthors}
+                  languages={languages}
+                  selectedLanguages={selectedLanguages}
+                  setSelectedLanguages={setSelectedLanguages}
+                  years={years}
+                  startYear={startYear}
+                  setStartYear={setStartYear}
+                  endYear={endYear}
+                  setEndYear={setEndYear}
+                  onFilter={filterResults}
+                />
+              </h1>
+              <div className="">
+                <h2 className="text-xl font-bold mb-4">Bookmarked Items</h2>
+                {bookmarkedBooks.length > 0 ? (
+                  <div className="flex flex-col gap-4">
+                    {bookmarkedBooks.map((book) => (
+                      <div
+                        key={book.id}
+                        className="flex items-start p-4 border border-gray-300 rounded-md w-full"
+                      >
+                        <div className="flex-none mr-4">
+                          {book.volumeInfo.imageLinks && (
+                            <img
+                              src={book.volumeInfo.imageLinks.thumbnail}
+                              alt={book.volumeInfo.title}
+                              className="w-24 h--32 object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="flex flex-col flex-1">
+                          <h3 className="text-lg font-medium">{book.volumeInfo.title}</h3>
+                          <p className="text-gray-600">
+                            {book.volumeInfo.authors && book.volumeInfo.authors.length > 0
+                              ? book.volumeInfo.authors.join(", ")
+                              : "No authors listed"}
+                          </p>
 
-                        <div className="flex items-center mt-2">
-                          <a
-                            className="text-blue-800 hover:underline"
-                            href={book.volumeInfo.previewLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Preview Link
-                          </a>
-                          <button
-                            className={`ml-auto p-2 rounded ${isBookmarked(book) ? "bg-yellow-500" : "bg-gray-200"
-                              }`}
-                            onClick={() => handleBookmarkToggle(book)}
-                          >
-                            {isBookmarked(book) ? "Remove Bookmark" : "Bookmark"}
-                          </button>
+                          <div className="flex items-center mt-2">
+                            <a
+                              className="text-blue-800 hover:underline"
+                              href={book.volumeInfo.previewLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Preview Link
+                            </a>
+                            <button
+                              className="ml-auto p-2 rounded"
+                              onClick={() => handleBookmarkToggle(book)}
+                              aria-label={isBookmarked(book) ? "Remove Bookmark" : "Bookmark"}
+                            >
+                              {isBookmarked(book) ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                  <path d="M19 21L12 17L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z" fill="#131313" stroke="#131313" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                  <path d="M19 21L12 17L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z" stroke="#131313" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              )}
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-600">No items bookmarked yet.</p>
-              )}
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-600">No items bookmarked yet.</p>
+                )}
+              </div>
             </div>
             <PaginationComponent
               totalItems={filteredResults.length}
@@ -222,11 +232,11 @@ export default function App() {
               currentPage={currentPage}
               onPageChange={(page) => setCurrentPage(page)}
             />
-            <div className="flex flex-col items-start">
+            <div className="grid grid-cols-1">
               {currentResults.map((book) => (
                 <div
                   key={book.id}
-                  className="flex flex-col gap-2 items-start m-8 p-4 border-2 border-gray-300 rounded-md w-5/6"
+                  className="flex flex-col gap-2 items-start lg:m-8 p-4 border-2 border-gray-300 rounded-md w-5/6"
                 >
                   {book.volumeInfo.imageLinks && (
                     <div className="border border-2-black p-2">
@@ -271,11 +281,19 @@ export default function App() {
                         : book.volumeInfo.language}
                   </p>
                   <button
-                    className={`p-2 mt-2 rounded ${isBookmarked(book) ? "bg-yellow-500" : "bg-gray-200"
-                      }`}
+                    className="p-2 mt-2 rounded"
                     onClick={() => handleBookmarkToggle(book)}
+                    aria-label={isBookmarked(book) ? "Remove Bookmark" : "Bookmark"}
                   >
-                    {isBookmarked(book) ? "Remove Bookmark" : "Bookmark"}
+                    {isBookmarked(book) ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 21L12 17L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z" fill="#131313" stroke="#131313" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 21L12 17L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z" stroke="#131313" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
                   </button>
                 </div>
               ))}
